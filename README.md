@@ -59,6 +59,10 @@ Calls
 
 Returns true if 'Value' returns true when passed to the 'Descriptor' of 'Field', else it returns false.
 
+- Instance.GenAll()
+
+Returns an array of all fields
+
 - Instance.GenHash()
 
 Returns an array of all fields that are hashable (not Retrievable and Private)
@@ -95,3 +99,16 @@ Future
 - Tests and doc for 'GenRestrictions' will follow
 
 - Potential new calls/properties as I find use for them
+
+Versions History
+================
+
+1.0.0 
+-----
+
+Initial Release
+
+1.1.0
+-----
+
+Added GenAll method.

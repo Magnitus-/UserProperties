@@ -9,7 +9,7 @@ var PasswordRegex = new RegExp("^.{8,20}$");
 
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(8);
+        Test.expect(9);
         var Properties = {'Username': {
                               'Required': true,
                               'Unique': true,
@@ -51,6 +51,7 @@ exports.Main = {
         var Required = UserSchema.GenRequired();
         var Public = UserSchema.GenPublic();
         var Editable = UserSchema.GenEditable();
+        var All = UserSchema.GenAll();
         Test.ok(Hashable.length==1 && Hashable[0]=='Password', "Confirming GetHash works");
         Test.ok(Loginable.length==1 && Loginable[0]=='Email', "Confirming GetLogin works");
         Test.ok(Authenticable.length==1 && Authenticable[0]=='Password', "Confirming GenAuth works");
@@ -59,6 +60,7 @@ exports.Main = {
         Test.ok(Public.length==1 && Public[0]=='Username', "Confirming GenPublic works");
         Test.ok(Editable.length==4 && Editable.some(function(Item, Index, List) {return Item=='Age'}) && Editable.some(function(Item, Index, List) {return Item=='Email'}) && Editable.some(function(Item, Index, List) {return Item=='Password'}) && Editable.some(function(Item, Index, List) {return Item=='Address'}), "Confirming GenEditable works");
         Test.ok((!UserSchema.Validate('Gender', 'Male')) && UserSchema.Validate('Gender', 'F') && (!UserSchema.Validate('Age', '30')) && UserSchema.Validate('Age', 30), "Confirming validation works");
+        Test.ok(All.length==6, "Confirming that GenAll works");
         Test.done();
     }
 };
