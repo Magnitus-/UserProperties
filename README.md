@@ -63,6 +63,10 @@ Returns true if 'Value' returns true when passed to the 'Descriptor' of 'Field',
 
 Returns an array of all fields
 
+- Instance.GenComplement(Set)
+
+Return all fields that are not present in 'Set'.
+
 - Instance.GenHash()
 
 Returns an array of all fields that are hashable (not Retrievable and Private)
@@ -112,3 +116,8 @@ Initial Release
 -----
 
 Added GenAll method.
+
+1.2.0
+-----
+
+Added GenComplement method.
