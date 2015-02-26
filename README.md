@@ -49,8 +49,9 @@ The properties of each field are as follow:
 - Mutable: Specifies whether or not the information in the field should change
 - Retrievable: Specifies whether or not the information in the field needs to be retrieved in its original format
 - Description: Function that describes the field by returning true or false against a candidate value for the field
+- Access: Method user has to retrieve the value of the property (ex: 'Self', 'Email', 'Phone', etc).
 
-All the properties above, except 'Retrievable', 'Mutable' and 'Description' default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything).
+All the properties above, except 'Retrievable', 'Mutable', 'Description' and 'Access' default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything) and 'Access' defaults to 'User'.
 
 Calls
 -----
@@ -79,6 +80,8 @@ Returns an array of all fields that are suitable to login the user with (Private
 
 Returns an array of all fields that are suitable to authentify a user (Private, Required and Secret)
 
+DEPRECATION: This method is made redundant by the more precice GenConfirm method which should be preferred. 
+
 - Instance.GenIdentify()
 
 Returns an array of all fields that are suitable to uniquely identify a user (Required and Unique)
@@ -91,9 +94,13 @@ Returns an array of all the fields a user registering would need (Required)
 
 Returns an array of all the fields that are publicly accessible (not Private)
 
-- Instance.GenEditable()
+- Instance.GenEditable(Source)
 
-Returns an array of all the fields that are modifiable (Mutable)
+Returns an array of all the fields that are modifiable (Mutable). If 'Source' is defined, Access===Source is also a requirement.
+
+- Instance.GenConfirm(Source)
+
+Returns an array of all fields that confirm that the user has access to 'Source' (Private, Required, Secret, Access===Source) 
 
 Future
 ------
@@ -121,3 +128,10 @@ Added GenAll method.
 -----
 
 Added GenComplement method.
+
+1.3.0
+-----
+
+Added 'Access' property and 'GenConfirm' method.
+
+Added 'Source' verification to 'GenEditable' method.
