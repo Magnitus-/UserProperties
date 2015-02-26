@@ -102,6 +102,14 @@ Returns an array of all the fields that are modifiable (Mutable). If 'Source' is
 
 Returns an array of all fields that confirm that the user has access to 'Source' (Private, Required, Secret, Access===Source) 
 
+- Instance.GenAccess(Source)
+
+Returns an array of all fields where Access===Source.
+
+- Module.GenIntersection(SetA, SetB)
+
+Returns an array of all elements present in both SetA and SetB.
+
 Future
 ------
 
@@ -135,3 +143,8 @@ Added GenComplement method.
 Added 'Access' property and 'GenConfirm' method.
 
 Added 'Source' verification to 'GenEditable' method.
+
+1.4.0
+-----
+
+Added 'GenAccess' and 'GenIntersection' methods.

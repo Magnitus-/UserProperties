@@ -9,7 +9,7 @@ var PasswordRegex = new RegExp("^.{8,20}$");
 
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(12);
+        Test.expect(14);
         var Properties = {'Username': {
                               'Required': true,
                               'Unique': true,
@@ -64,6 +64,10 @@ exports.Main = {
         var ConfirmEmail = UserSchema.GenConfirm('Email');
         var UserEditable = UserSchema.GenEditable('User');
         var MailEditable = UserSchema.GenEditable('Email');
+        var UserAccessible = UserSchema.GenAccess('User');
+        var EmailAccessible = UserSchema.GenAccess('Email');
+        var EmptyAgain = UserProperties.GenIntersection(UserAccessible, EmailAccessible);
+        var IdentifiablePrivate = UserProperties.GenIntersection(Identifiable, UserSchema.GenComplement(Public));
         Test.ok(Hashable.length==1 && Hashable[0]=='Password', "Confirming GetHash works");
         Test.ok(Loginable.length==1 && Loginable[0]=='Email', "Confirming GetLogin works");
         Test.ok(Authenticable.length==2 && Authenticable.some(function(Item, Index, List) {return Item=='Password'}) && Authenticable.some(function(Item, Index, List) {return Item=='EmailToken'}), "Confirming GenAuth works");
@@ -78,6 +82,8 @@ exports.Main = {
         var EditableWorks = UserEditable.length==4 && UserEditable.some(function(Item, Index, List) {return Item=='Age'}) && UserEditable.some(function(Item, Index, List) {return Item=='Email'}) && UserEditable.some(function(Item, Index, List) {return Item=='Password'}) && UserEditable.some(function(Item, Index, List) {return Item=='Address'});
         EditableWorks = EditableWorks && MailEditable.length==1 && MailEditable[0]=='EmailToken';
         Test.ok(EditableWorks, "Confirming that GenEditable works with an argument");
+        Test.ok(UserAccessible.length==6 && (!UserEditable.some(function(Item, Index, List) {return Item=='EmailToken'})) && EmailAccessible.length==1 && EmailAccessible[0]=='EmailToken', "Confirming that GenAccessible works.");
+        Test.ok(EmptyAgain.length==0 && IdentifiablePrivate.length==1 && IdentifiablePrivate[0]=='Email', "Confirming that GenIntersection works.");
         Test.done();
     }
 };
