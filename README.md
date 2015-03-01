@@ -42,16 +42,15 @@ The object should have the following structure:
 ```
 The properties of each field are as follow:
 
-- Required: Specify whether or not the field should exist for every user.
-- Unique: Specify whether or not the field should be unique to every user.
-- Private: Specifies whether or not the value of the field shouldn't be immediately availabe to everyone
-- Secret: Specifies whether or not the information in the field should be known only to the user and should be very hard to figure out
-- Mutable: Specifies whether or not the information in the field should change
-- Retrievable: Specifies whether or not the information in the field needs to be retrieved in its original format
-- Description: Function that describes the field by returning true or false against a candidate value for the field
-- Access: Method user has to retrieve the value of the property (ex: 'Self', 'Email', 'Phone', etc).
+- Required: Specify whether or not the field should exist for every user. It takes the boolean values of true or false.
+- Unique: Specify whether or not the field should be unique to every user. It takes the boolean values of true or false.
+- Privacy: Specifies how private the information in the field is. It can be Module.Privacy.Public, Module.Privacy.Private or Module.Privacy.Secret. Public means publicly available information (ex: Username), Private means restricted, but not secret information (ex: home address) and Secret means information that only the user should have easy access to (ex: password)
+- Mutable: Specifies whether or not the information in the field should change. It takes the boolean values of true or false.
+- Retrievable: Specifies whether or not the information in the field needs to be retrieved in its original format. It takes the boolean values of true or false.
+- Description: Function that describes the field by returning true or false against a candidate value for the field. The candidate value is expected to be the single argument the function takes.
+- Access: Method user has to retrieve the value of the property (ex: 'User', 'Email', 'Phone', etc). It takes the value of a string.
 
-All the properties above, except 'Retrievable', 'Mutable', 'Description' and 'Access' default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything) and 'Access' defaults to 'User'.
+All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access' and 'Privacy' default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public.
 
 Calls
 -----
@@ -60,62 +59,49 @@ Calls
 
 Returns true if 'Value' returns true when passed to the 'Descriptor' of 'Field', else it returns false.
 
-- Instance.GenAll()
-
-Returns an array of all fields
-
-- Instance.GenComplement(Set)
+- Instance.ListComplement(Set)
 
 Return all fields that are not present in 'Set'.
 
-- Instance.GenHash()
+- Instance.ListHashable()
 
-Returns an array of all fields that are hashable (not Retrievable and Private)
+Returns an array of all fields that are hashable (not Retrievable and Privacy is not Public)
 
-- Instance.GenLogin()
+- Instance.ListLogin()
 
-Returns an array of all fields that are suitable to login the user with (Private, Required and Unique)
+Returns an array of all fields that are suitable to login the user with (Required, Unique and Privacy is not Public)
 
-- Instance.GenAuth()
+- Instance.ListAuth(Source)
 
-Returns an array of all fields that are suitable to authentify a user (Private, Required and Secret)
+Returns an array of all fields that are suitable to authentify a given source (Private, Required, Privacy is Secret. If 'Source' is defined, Access===Source is also a requirement)
 
-DEPRECATION: This method is made redundant by the more precice GenConfirm method which should be preferred. 
-
-- Instance.GenIdentify()
+- Instance.ListID()
 
 Returns an array of all fields that are suitable to uniquely identify a user (Required and Unique)
 
-- Instance.GenRequired()
+- Instance.List(Property, Value)
 
-Returns an array of all the fields a user registering would need (Required)
+Returns an array of all fields whose defined by 'Property' is equal to the value defined by 'Value'. If no arguments are passed, all fields are returned.
 
-- Instance.GenPublic()
-
-Returns an array of all the fields that are publicly accessible (not Private)
-
-- Instance.GenEditable(Source)
+- Instance.ListEditable(Source)
 
 Returns an array of all the fields that are modifiable (Mutable). If 'Source' is defined, Access===Source is also a requirement.
 
-- Instance.GenConfirm(Source)
-
-Returns an array of all fields that confirm that the user has access to 'Source' (Private, Required, Secret, Access===Source) 
-
-- Instance.GenAccess(Source)
-
-Returns an array of all fields where Access===Source.
-
-- Module.GenIntersection(SetA, SetB)
+- Module.ListIntersection(SetA, SetB)
 
 Returns an array of all elements present in both SetA and SetB.
+
+Example
+-------
+
+I highly recommend you take a look at the test file to see how this library should be use.
+
+The test file handles the classical case of a user that has the following fields: Username, Email, Password, Gender, Age and EmailToken.
 
 Future
 ------
 
-- Examples will follow. Look at Test.js file for examples in the meanwhile.
-
-- Tests and doc for 'GenRestrictions' will follow
+- Tests and doc for 'ListRestrictions' will follow once I integrate this library in the 'user-store' project.
 
 - Potential new calls/properties as I find use for them
 
@@ -148,3 +134,22 @@ Added 'Source' verification to 'GenEditable' method.
 -----
 
 Added 'GenAccess' and 'GenIntersection' methods.
+
+2.0.0
+-----
+
+- Condensed the 'Private' and 'Secret' properties into a single property called 'Privacy' which can be Public, Private or Secret.
+- Condensed 'GenAuth' and 'GenConfirm' methods into a single method called 'ListAuth'
+- Condensed 'GenPublic', 'GenRequired', 'GenAccess' and 'GenAll' methods into a single method called 'List' which takes arguments to differential the property you are intersted in.
+- Refactored internal variable names for greater readability and correctness.
+- Gave the following methods slightly more intuitive names:
+-'GenRestrictions' was renamed to 'GetRestrictions'
+-'GenHash' was renamed to 'ListHashable'
+-'GenComplement' was renamed to 'ListComplement'
+-'GenIntersection' was renamed to 'ListIntersection'
+-'GenAccess' was renamed to 'ListAccessible'
+-'GenRequired' was renamed to 'ListRequired'
+-'GenIdentify' was renamed to 'ListID'
+-'GenPublic' was renamed to 'ListPublic'
+-'GenLogin' was renamed to 'ListLogin'
+-'GenEditable' was renamed to 'ListEditable'
