@@ -49,9 +49,10 @@ The properties of each field are as follow:
 - Retrievable: Specifies whether or not the information in the field needs to be retrieved in its original format. It takes the boolean values of true or false.
 - Description: Function that describes the field by returning true or false against a candidate value for the field. The candidate value is expected to be the single argument the function takes.
 - Access: Method user has to retrieve the value of the property (ex: 'User', 'Email', 'Phone', etc). It takes the value of a string.
-- Generators: Specifies what mecanisms are used to create/change the value of the field. It takes the value of an array of strings.
+- Sources: Specifies what mecanisms are used to create/change the value of the field. It takes the value of an array of strings.
+- Generator: Function that generates a suitable random value for the field. It can be an asynchronous call in which case the expected callback signature should be: function(Err, GeneratedValue). If synchronous, it should just return the result.
 
-All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access', 'Privacy' and Generators default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public. Generators defaults to ['User'].
+All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access', 'Privacy' and Generators default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public. Sources defaults to ['User'] and Generate defaults to null.
 
 Calls
 -----
@@ -96,9 +97,9 @@ Returns an array of all elements present in both SetA and SetB.
 
 Returns an array of all fields where 'Property' is an array-like container (ie, needs to have the 'some' method defined) which contains the value 'Value'. 
 
-- Instance.ListPostable
+- Instance.ListGeneratable()
 
-Returns an array of all fields where an automated value could be generated after the field is initially created. This requires both 'Auto' to be listed in the field's generators and the field to be mutable.
+Returns an array of all fields where an automated value could be generated after the field is initially created. This requires both 'Auto' to be listed in the field's Sources and the field to be mutable.
 
 Example
 -------
@@ -166,4 +167,13 @@ Added 'GenAccess' and 'GenIntersection' methods.
 2.1.0
 -----
 
+- Added 'Generators' property.
 - Added 'ListIn' and 'ListPostable' methods.
+
+3.0.0
+-----
+
+- Renamed 'Generators' property to 'Sources'.
+- Renamed 'ListPostable' method to 'ListGeneratable'.
+- Added 'Generator' property and a 'Generate' method.
+- Added the 'uid-safe' project to the dev dependencies.
