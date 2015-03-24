@@ -9,7 +9,7 @@ var PasswordRegex = new RegExp("^.{8,20}$");
 
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(14);
+        Test.expect(16);
         var Fields = {'Username': {
                           'Required': true,
                           'Unique': true,
@@ -26,7 +26,8 @@ exports.Main = {
                           'Required': true,
                           'Privacy': UserProperties.Privacy.Secret,
                           'Retrievable': false,
-                          'Description': function(Value) {return PasswordRegex.test(Value)}
+                          'Description': function(Value) {return PasswordRegex.test(Value)},
+                          'Generators': ['User', 'Auto']
                       },
                       'Gender': {
                           'Privacy': UserProperties.Privacy.Private,
@@ -44,7 +45,8 @@ exports.Main = {
                       'EmailToken': {
                           'Required': true,
                           'Privacy': UserProperties.Privacy.Secret,
-                          'Access': 'Email'
+                          'Access': 'Email',
+                          'Generators': ['Auto']
                       }};
                           
         var UserSchema = UserProperties(Fields);
@@ -66,6 +68,9 @@ exports.Main = {
         var EmailAccessible = UserSchema.List('Access', 'Email');
         var EmptyAgain = UserProperties.ListIntersection(UserAccessible, EmailAccessible);
         var IdentifiablePrivate = UserProperties.ListIntersection(Identifiable, UserSchema.ListComplement(Public));
+        var AutoGenerateable = UserSchema.ListIn('Generators', 'Auto');
+        var UserGenerateable = UserSchema.ListIn('Generators', 'User');
+        var Postable = UserSchema.ListPostable();
         Test.ok(Hashable.length==1 && Hashable[0]=='Password', "Confirming ListHashable works");
         Test.ok(Loginable.length==1 && Loginable[0]=='Email', "Confirming ListLogin works");
         Test.ok(Authenticable.length==2 && Authenticable.some(function(Item, Index, List) {return Item=='Password'}) && Authenticable.some(function(Item, Index, List) {return Item=='EmailToken'}), "Confirming ListAuth works");
@@ -82,6 +87,8 @@ exports.Main = {
         Test.ok(EditableWorks, "Confirming that ListEditable works with an argument");
         Test.ok(UserAccessible.length==6 && (!UserEditable.some(function(Item, Index, List) {return Item=='EmailToken'})) && EmailAccessible.length==1 && EmailAccessible[0]=='EmailToken', "Confirming that List works with Accessible.");
         Test.ok(EmptyAgain.length==0 && IdentifiablePrivate.length==1 && IdentifiablePrivate[0]=='Email', "Confirming that ListIntersection works.");
+        Test.ok(AutoGenerateable.length===2 && AutoGenerateable.some(function(Item, Index, List) {return Item=='EmailToken'}) && AutoGenerateable.some(function(Item, Index, List) {return Item=='Password'}) && UserGenerateable.length===6 && (!UserGenerateable.some(function(Item, Index, List) {return Item=='EmailToken'})), "Confirming that ListIn works. ");
+        Test.ok(Postable.length===2 && Postable.some(function(Item, Index, List) {return Item=='EmailToken'}) && Postable.some(function(Item, Index, List) {return Item=='Password'}), "Confirming that ListPostable works.");
         Test.done();
     }
 };
