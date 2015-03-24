@@ -52,7 +52,7 @@ The properties of each field are as follow:
 - Sources: Specifies what mecanisms are used to create/change the value of the field. It takes the value of an array of strings.
 - Generator: Function that generates a suitable random value for the field. It can be an asynchronous call in which case the expected callback signature should be: function(Err, GeneratedValue). If synchronous, it should just return the result.
 
-All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access', 'Privacy' and Generators default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public. Sources defaults to ['User'] and Generate defaults to null.
+All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access', 'Privacy' and Generators default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public. Sources defaults to ['User'] and Generator defaults to null.
 
 Calls
 -----
@@ -100,6 +100,14 @@ Returns an array of all fields where 'Property' is an array-like container (ie, 
 - Instance.ListGeneratable()
 
 Returns an array of all fields where an automated value could be generated after the field is initially created. This requires both 'Auto' to be listed in the field's Sources and the field to be mutable.
+
+- Instance.Generate(Field, Callback)
+
+Calls the Generator property to generate a value for the field. The Callback is optional. 
+
+If Callback is undefined, the Generate method will assume that the field's Generator property is a synchronous function and return its result.
+
+If Callback is defined, the Generate method will pass it as an argument to the Generator. If the Field doesn't have a Generator, the Generate method will call Callback directly, passing it an error as it's first argument and null as its second.
 
 Example
 -------
@@ -177,3 +185,8 @@ Added 'GenAccess' and 'GenIntersection' methods.
 - Renamed 'ListPostable' method to 'ListGeneratable'.
 - Added 'Generator' property and a 'Generate' method.
 - Added the 'uid-safe' project to the dev dependencies.
+
+3.0.1
+-----
+
+- Added some missing documentation.
