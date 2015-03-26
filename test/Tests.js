@@ -18,9 +18,20 @@ function AsyncGen(Callback)
     Callback(null, Uid(15));
 }
 
+function In()
+{
+    var InList = arguments[0];
+    var CheckList = Array.prototype.slice.call(arguments, 1);
+    return(CheckList.every(function(CheckItem) {
+        return(InList.some(function(RefItem) {
+            return RefItem===CheckItem;
+        }));
+    }));
+}
+
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(17);
+        Test.expect(18);
         var Fields = {'Username': {
                           'Required': true,
                           'Unique': true,
@@ -84,6 +95,7 @@ exports.Main = {
         var AutoGenerateable = UserSchema.ListIn('Sources', 'Auto');
         var UserGenerateable = UserSchema.ListIn('Sources', 'User');
         var Postable = UserSchema.ListGeneratable();
+        var RequiredNotMutable = UserProperties.ListUnion(Required, UserSchema.List('Mutable', false));
         var GeneratedNull = UserSchema.Generate('Address');
         var GeneratedPass = UserSchema.Generate('Password');
         var GeneratedToken = null;
@@ -91,22 +103,23 @@ exports.Main = {
             var GeneratedToken = Value;
             Test.ok(Hashable.length==1 && Hashable[0]=='Password', "Confirming ListHashable works");
             Test.ok(Loginable.length==1 && Loginable[0]=='Email', "Confirming ListLogin works");
-            Test.ok(Authenticable.length==2 && Authenticable.some(function(Item, Index, List) {return Item=='Password'}) && Authenticable.some(function(Item, Index, List) {return Item=='EmailToken'}), "Confirming ListAuth works");
-            Test.ok(Identifiable.length==2 && Identifiable.some(function(Item, Index, List) {return Item=='Email'}) && Identifiable.some(function(Item, Index, List) {return Item=='Username'}), "Confirming ListID works");
-            Test.ok(Required.length==5 && Required.some(function(Item, Index, List) {return Item=='Username'}) && Required.some(function(Item, Index, List) {return Item=='Email'}) && Required.some(function(Item, Index, List) {return Item=='Password'}) && Required.some(function(Item, Index, List) {return Item=='Address'}) && Required.some(function(Item, Index, List) {return Item=='EmailToken'}), "Confirming List works with Required.");
+            Test.ok(Authenticable.length==2 && In(Authenticable, 'Password', 'EmailToken'), "Confirming ListAuth works");
+            Test.ok(Identifiable.length==2 && In(Identifiable, 'Email', 'Username'), "Confirming ListID works");
+            Test.ok(Required.length==5 && In(Required, 'Username', 'Email', 'Password', 'Address', 'EmailToken'), "Confirming List works with Required.");
             Test.ok(Public.length==1 && Public[0]=='Username', "Confirming List works with Privacy");
-            Test.ok(Editable.length==5 && Editable.some(function(Item, Index, List) {return Item=='Age'}) && Editable.some(function(Item, Index, List) {return Item=='Email'}) && Editable.some(function(Item, Index, List) {return Item=='Password'}) && Editable.some(function(Item, Index, List) {return Item=='Address'}) && Editable.some(function(Item, Index, List) {return Item=='EmailToken'}), "Confirming ListEditable works");
+            Test.ok(Editable.length==5 && In(Editable, 'Age', 'Email', 'Password', 'Address', 'EmailToken'), "Confirming ListEditable works");
             Test.ok((!UserSchema.Validate('Gender', 'Male')) && UserSchema.Validate('Gender', 'F') && (!UserSchema.Validate('Age', '30')) && UserSchema.Validate('Age', 30), "Confirming validation works");
             Test.ok(All.length==7, "Confirming that List with no arguments works");
             Test.ok(Empty.length==0 && NotRequired.length==2, "Confirming that ListComplement works");
             Test.ok(ConfirmUser.length==1&&ConfirmUser[0]=='Password'&&ConfirmEmail.length==1&&ConfirmEmail[0]=='EmailToken', "Confirming that ListAuth works with an argument.");
-            var EditableWorks = UserEditable.length==4 && UserEditable.some(function(Item, Index, List) {return Item=='Age'}) && UserEditable.some(function(Item, Index, List) {return Item=='Email'}) && UserEditable.some(function(Item, Index, List) {return Item=='Password'}) && UserEditable.some(function(Item, Index, List) {return Item=='Address'});
+            var EditableWorks = UserEditable.length==4 && In(UserEditable, 'Age', 'Email', 'Password', 'Address');
             EditableWorks = EditableWorks && MailEditable.length==1 && MailEditable[0]=='EmailToken';
             Test.ok(EditableWorks, "Confirming that ListEditable works with an argument");
-            Test.ok(UserAccessible.length==6 && (!UserEditable.some(function(Item, Index, List) {return Item=='EmailToken'})) && EmailAccessible.length==1 && EmailAccessible[0]=='EmailToken', "Confirming that List works with Accessible.");
+            Test.ok(UserAccessible.length==6 && (!In(UserAccessible, 'EmailToken')) && EmailAccessible.length==1 && EmailAccessible[0]=='EmailToken', "Confirming that List works with Accessible.");
             Test.ok(EmptyAgain.length==0 && IdentifiablePrivate.length==1 && IdentifiablePrivate[0]=='Email', "Confirming that ListIntersection works.");
-            Test.ok(AutoGenerateable.length===2 && AutoGenerateable.some(function(Item, Index, List) {return Item=='EmailToken'}) && AutoGenerateable.some(function(Item, Index, List) {return Item=='Password'}) && UserGenerateable.length===6 && (!UserGenerateable.some(function(Item, Index, List) {return Item=='EmailToken'})), "Confirming that ListIn works. ");
-            Test.ok(Postable.length===2 && Postable.some(function(Item, Index, List) {return Item=='EmailToken'}) && Postable.some(function(Item, Index, List) {return Item=='Password'}), "Confirming that ListPostable works.");
+            Test.ok(AutoGenerateable.length===2 && In(AutoGenerateable, 'EmailToken', 'Password') && UserGenerateable.length===6 && (!In(UserGenerateable, 'EmailToken')), "Confirming that ListIn works. ");
+            Test.ok(Postable.length===2 && In(Postable, 'EmailToken', 'Password'), "Confirming that ListPostable works.");
+            Test.ok(RequiredNotMutable.length===6 && In(RequiredNotMutable, 'Username', 'Email', 'Password', 'Gender', 'Address', 'EmailToken'), "Confirming that ListUnion works.");
             UserSchema.Generate('Gender', function(Err, Value) {
                 Test.ok(GeneratedNull===null && typeof(GeneratedPass) === typeof('') && GeneratedPass.length === 20 && typeof(GeneratedToken) === typeof('') && GeneratedToken.length === 20 && Err, "Confirming that Generate works.");
                 Test.done();

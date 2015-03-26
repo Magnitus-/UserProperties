@@ -93,6 +93,10 @@ Returns an array of all the fields that are modifiable (Mutable). If 'Source' is
 
 Returns an array of all elements present in both SetA and SetB.
 
+- Module.ListUnion(SetA, SetB)
+
+Returns an array of all elements present in at least one of SetA or SetB.
+
 - Instance.ListIn(Field, Value)
 
 Returns an array of all fields where 'Property' is an array-like container (ie, needs to have the 'some' method defined) which contains the value 'Value'. 
@@ -190,3 +194,9 @@ Added 'GenAccess' and 'GenIntersection' methods.
 -----
 
 - Added some missing documentation.
+
+3.1.0
+-----
+
+- Added 'ListUnion' method.
+- Bit of refactoring on tests.
