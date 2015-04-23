@@ -31,7 +31,7 @@ function In()
 
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(18);
+        Test.expect(21);
         var Fields = {'Username': {
                           'Required': true,
                           'Unique': true,
@@ -120,6 +120,9 @@ exports.Main = {
             Test.ok(AutoGenerateable.length===2 && In(AutoGenerateable, 'EmailToken', 'Password') && UserGenerateable.length===6 && (!In(UserGenerateable, 'EmailToken')), "Confirming that ListIn works. ");
             Test.ok(Postable.length===2 && In(Postable, 'EmailToken', 'Password'), "Confirming that ListPostable works.");
             Test.ok(RequiredNotMutable.length===6 && In(RequiredNotMutable, 'Username', 'Email', 'Password', 'Gender', 'Address', 'EmailToken'), "Confirming that ListUnion works.");
+            Test.ok(UserSchema.Is('Username', 'Required', true) && (!UserSchema.Is('Email', 'Unique', false)) && UserSchema.Is('EmailToken', 'Access', 'Email') && (!UserSchema.Is('Username', 'Access', 'Email')), "Confirming that Is works with 3 arguments");
+            Test.ok(UserSchema.Is('EmailToken', {'Required': true, 'Privacy': UserProperties.Privacy.Secret, 'Access': 'Email'}) && (!UserSchema.Is('EmailToken', {'Required': true, 'Privacy': UserProperties.Privacy.Secret, 'Access': 'User'})), "Confirming that Is works with 2 arguments");
+            Test.ok(UserSchema.In('Password', 'Sources', 'Auto') && UserSchema.In('Password', 'Sources', 'User') && (!UserSchema.In('Password', 'Sources', 'NotThere')), "Confirming that In works");
             UserSchema.Generate('Gender', function(Err, Value) {
                 Test.ok(GeneratedNull===null && typeof(GeneratedPass) === typeof('') && GeneratedPass.length === 20 && typeof(GeneratedToken) === typeof('') && GeneratedToken.length === 20 && Err, "Confirming that Generate works.");
                 Test.done();

@@ -113,6 +113,18 @@ If Callback is undefined, the Generate method will assume that the field's Gener
 
 If Callback is defined, the Generate method will pass it as an argument to the Generator. If the Field doesn't have a Generator, the Generate method will call Callback directly, passing it an error as it's first argument and null as its second.
 
+- Instance.In(Field, Property, Value)
+
+Returns true if 'Property' of 'Field' is an array and contains 'Value', else returns false.
+
+- Instance.Is(Field, Property, Value)
+
+Returns true if 'Property' of 'Field' is strictly equal (===) to 'Value', else returns false.
+
+- Instance.Is(Field, Properties)
+
+Variation on the above call, where 'Properties' is an object whose property/value pairs represent properties/values to test in 'Field'.
+
 Example
 -------
 
@@ -123,39 +135,40 @@ The test file handles the classical case of a user that has the following fields
 Future
 ------
 
-- Tests and doc for 'ListRestrictions' will follow once I integrate this library in the 'user-store' project.
-
-- Potential new calls/properties as I find use for them
+Potential new calls/properties as I find use for them
 
 Versions History
 ================
 
-1.0.0 
+3.2.0
 -----
 
-Initial Release
+- Added 'Is' and 'In' methods to directly test properties in fields.
 
-1.1.0
+3.1.0
 -----
 
-Added GenAll method.
+- Added 'ListUnion' method.
+- Bit of refactoring on tests.
 
-1.2.0
+3.0.1
 -----
 
-Added GenComplement method.
+- Added some missing documentation.
 
-1.3.0
+3.0.0
 -----
 
-Added 'Access' property and 'GenConfirm' method.
+- Renamed 'Generators' property to 'Sources'.
+- Renamed 'ListPostable' method to 'ListGeneratable'.
+- Added 'Generator' property and a 'Generate' method.
+- Added the 'uid-safe' project to the dev dependencies.
 
-Added 'Source' verification to 'GenEditable' method.
-
-1.4.0
+2.1.0
 -----
 
-Added 'GenAccess' and 'GenIntersection' methods.
+- Added 'Generators' property.
+- Added 'ListIn' and 'ListPostable' methods.
 
 2.0.0
 -----
@@ -176,27 +189,45 @@ Added 'GenAccess' and 'GenIntersection' methods.
 - 'GenLogin' was renamed to 'ListLogin'
 - 'GenEditable' was renamed to 'ListEditable'
 
-2.1.0
+1.4.0
 -----
 
-- Added 'Generators' property.
-- Added 'ListIn' and 'ListPostable' methods.
+Added 'GenAccess' and 'GenIntersection' methods.
 
-3.0.0
+1.3.0
 -----
 
-- Renamed 'Generators' property to 'Sources'.
-- Renamed 'ListPostable' method to 'ListGeneratable'.
-- Added 'Generator' property and a 'Generate' method.
-- Added the 'uid-safe' project to the dev dependencies.
+- Added 'Access' property and 'GenConfirm' method.
+- Added 'Source' verification to 'GenEditable' method.
 
-3.0.1
+1.2.0
 -----
 
-- Added some missing documentation.
+Added GenComplement method.
 
-3.1.0
+1.1.0
 -----
 
-- Added 'ListUnion' method.
-- Bit of refactoring on tests.
+Added GenAll method.
+
+1.0.0 
+-----
+
+Initial Release
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
