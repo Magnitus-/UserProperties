@@ -31,7 +31,7 @@ function In()
 
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(21);
+        Test.expect(22);
         var Fields = {'Username': {
                           'Required': true,
                           'Unique': true,
@@ -76,6 +76,8 @@ exports.Main = {
         var UserSchema = UserProperties(Fields);
         var Hashable = UserSchema.ListHashable();
         var Loginable = UserSchema.ListLogin();
+        var UserLoginable = UserSchema.ListLogin('User');
+        var EmailLoginable = UserSchema.ListLogin('Email');
         var Authenticable = UserSchema.ListAuth();
         var Identifiable = UserSchema.ListID();
         var Required = UserSchema.List('Required', true);
@@ -101,8 +103,9 @@ exports.Main = {
         var GeneratedToken = null;
         UserSchema.Generate('EmailToken', function(Err, Value) {
             var GeneratedToken = Value;
-            Test.ok(Hashable.length==1 && Hashable[0]=='Password', "Confirming ListHashable works");
-            Test.ok(Loginable.length==1 && Loginable[0]=='Email', "Confirming ListLogin works");
+            Test.ok(Hashable.length===1 && Hashable[0]==='Password', "Confirming ListHashable works");
+            Test.ok(Loginable.length===1 && Loginable[0]==='Email', "Confirming ListLogin works");
+            Test.ok(UserLoginable.length===1 && UserLoginable[0]==='Email' && EmailLoginable.length===0, "Confirming ListLogin with an argument works");
             Test.ok(Authenticable.length==2 && In(Authenticable, 'Password', 'EmailToken'), "Confirming ListAuth works");
             Test.ok(Identifiable.length==2 && In(Identifiable, 'Email', 'Username'), "Confirming ListID works");
             Test.ok(Required.length==5 && In(Required, 'Username', 'Email', 'Password', 'Address', 'EmailToken'), "Confirming List works with Required.");

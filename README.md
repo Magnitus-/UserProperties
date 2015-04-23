@@ -69,9 +69,9 @@ Return all fields that are not present in 'Set'.
 
 Returns an array of all fields that are hashable (not Retrievable and Privacy is not Public)
 
-- Instance.ListLogin()
+- Instance.ListLogin(Source)
 
-Returns an array of all fields that are suitable to login the user with (Required, Unique and Privacy is not Public)
+Returns an array of all fields that are suitable to login the user with (Required, Unique and Privacy is not Public). If the 'Source' argument is definedm Access===Source is also a requirement.
 
 - Instance.ListAuth(Source)
 
@@ -139,6 +139,11 @@ Potential new calls/properties as I find use for them
 
 Versions History
 ================
+
+3.3.0
+-----
+
+- Added optional 'Source' argument to 'ListLogin' method.
 
 3.2.0
 -----
