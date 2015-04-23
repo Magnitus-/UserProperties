@@ -1,6 +1,6 @@
 {
   "name": "user-properties",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Utility to help enforce field properties for users",
   "keywords": [
     "User",
