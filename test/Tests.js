@@ -29,9 +29,38 @@ function In()
     }));
 }
 
+function ParseInt(Value)
+{
+    var Result = Number(Value);
+    if(!Number.isNaN(Result))
+    {
+        return Result;
+    }
+    else
+    {
+        return null;
+    }
+}
+
+function GenderStr(Value)
+{
+    if(Value==='M')
+    {
+        return 'Male';
+    }
+    else if(Value==='F')
+    {
+        return 'Female';
+    }
+    else
+    {
+        return 'Unknown';
+    }
+}
+
 exports.Main = {
     'Main': function(Test) {
-        Test.expect(22);
+        Test.expect(29);
         var Fields = {'Username': {
                           'Required': true,
                           'Unique': true,
@@ -55,11 +84,13 @@ exports.Main = {
                       'Gender': {
                           'Privacy': UserProperties.Privacy.Private,
                           'Mutable': false,
-                          'Description': function(Value) {return Value=='M'||Value=='F'} //Reality is more complex, but for the sake of this example...
+                          'Description': function(Value) {return Value=='M'||Value=='F'}, //Reality is more complex, but for the sake of this example...
+                          'Stringify': GenderStr
                       },
                       'Age': {
                           'Privacy': UserProperties.Privacy.Private,
-                          'Description': function(Value) {return typeof(Value)==typeof(1) && Value > 0}
+                          'Description': function(Value) {return typeof(Value)==typeof(1) && Value > 0},
+                          'Parse': ParseInt
                       },
                       'Address': {
                           'Required': true,
@@ -126,9 +157,18 @@ exports.Main = {
             Test.ok(UserSchema.Is('Username', 'Required', true) && (!UserSchema.Is('Email', 'Unique', false)) && UserSchema.Is('EmailToken', 'Access', 'Email') && (!UserSchema.Is('Username', 'Access', 'Email')), "Confirming that Is works with 3 arguments");
             Test.ok(UserSchema.Is('EmailToken', {'Required': true, 'Privacy': UserProperties.Privacy.Secret, 'Access': 'Email'}) && (!UserSchema.Is('EmailToken', {'Required': true, 'Privacy': UserProperties.Privacy.Secret, 'Access': 'User'})), "Confirming that Is works with 2 arguments");
             Test.ok(UserSchema.In('Password', 'Sources', 'Auto') && UserSchema.In('Password', 'Sources', 'User') && (!UserSchema.In('Password', 'Sources', 'NotThere')), "Confirming that In works");
+            Test.ok(UserSchema.Stringify('Username', 'Magnitus') === 'Magnitus' && UserSchema.Stringify('Email', []) === '[]' && UserSchema.Stringify('Gender', 'M') === 'Male', "Confirming that Stringify method works.");
+            Test.ok(UserSchema.Parse('Username', 'Magnitus') === 'Magnitus' && typeof(UserSchema.Parse('Email', [])) === typeof([]) && UserSchema.Parse('Age', '11') === 11 && UserSchema.Parse('Age', 'abc') === null, "Confirming that Parse method works.");
+            Test.ok(UserSchema.Validate('Age', 11, true) && UserSchema.Validate('Age', '11', true) && (!UserSchema.Validate('Age', 'abc', true)) && UserSchema.Validate('Gender', 'F', true) && (!UserSchema.Validate('Gender', 'abc', true)), "Confirming that Validate method with parsing flagged works.");
+            Test.ok(UserSchema.Parse('abc', 1) ===  null && UserSchema.Stringify('abc', 1) ===  null && (!UserSchema.Validate('abc', 1)) && (!UserSchema.Validate('abc', 1, true)), "Confirming that methods with unexistent fields are handled properly, part 1.");
+            Test.ok((!UserSchema.Is('abc', 'Required', true)) && (!UserSchema.Is('abc', {'Required': true, 'Privacy': UserProperties.Privacy.Secret, 'Access': 'Email'})) && (!UserSchema.In('abc', 'Sources', 'Auto')), "Confirming that methods with unexistent fields are handled properly, part 2.");
+            Test.ok(UserSchema.Generate('abc') === null, "Confirming that sync Generate with unexistent fields is handled properly.");
             UserSchema.Generate('Gender', function(Err, Value) {
                 Test.ok(GeneratedNull===null && typeof(GeneratedPass) === typeof('') && GeneratedPass.length === 20 && typeof(GeneratedToken) === typeof('') && GeneratedToken.length === 20 && Err, "Confirming that Generate works.");
-                Test.done();
+                UserSchema.Generate('abc', function(Err, Value) {
+                    Test.ok(Err, "Confirming that async Generate with unexistent fields is handled properly.");
+                    Test.done();
+                });
             });
         });
     }

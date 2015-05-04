@@ -51,15 +51,40 @@ The properties of each field are as follow:
 - Access: Method user has to retrieve the value of the property (ex: 'User', 'Email', 'Phone', etc). It takes the value of a string.
 - Sources: Specifies what mecanisms are used to create/change the value of the field. It takes the value of an array of strings.
 - Generator: Function that generates a suitable random value for the field. It can be an asynchronous call in which case the expected callback signature should be: function(Err, GeneratedValue). If synchronous, it should just return the result.
+- Stringify: Function that transforms a value for a field into its string equivalent. Its sole argument is the value to transform.
+- Parse: Function that converts a string representation for a value of the field into its native equivalent. It's sole argument is the string to transform.
 
-All the properties above, except 'Retrievable', 'Mutable', 'Description', 'Access', 'Privacy' and Generators default to false. 'Retrievable' and 'Mutable' default to true while 'Description' defaults to a function that always return true (ie, describes everything), 'Access' defaults to 'User' and 'Privacy' defaults to Public. Sources defaults to ['User'] and Generator defaults to null.
+Properties Defaults
+-------------------
+
+- Required: false
+- Unique: false
+- Privacy: UserProperties.Privacy.Public
+- Mutable: true
+- Retrievable: true
+- Access: 'User'
+- Description: A function that always returns true
+- Sources: ['User'] (an array containing only the string 'User')
+- Generator: null
+- Stringify: A function that returns a String argument unchanged and passes other types of argument to JSON.stringify, returning the result
+- Parse: A function that returns its argument unchanged
 
 Calls
 -----
 
-- Instance.Validate(Field, Value)
+- Instance.Parse(Field, Value, Parse)
+
+Pass 'Value' to the 'Parse' property of 'Field' and returns the result.
+
+- Instance.Stringify(Field, Value, Parse)
+
+Pass 'Value' to the 'Stringify' property of 'Field' and returns the result.
+
+- Instance.Validate(Field, Value, Parse)
 
 Returns true if 'Value' returns true when passed to the 'Descriptor' of 'Field', else it returns false.
+
+If 'Parse' is true, the return value of the 'Parse' method with 'Value' as its argument is passed to the 'Descriptor' of 'Field' instead.
 
 - Instance.ListComplement(Set)
 
@@ -139,6 +164,15 @@ Potential new calls/properties as I find use for them
 
 Versions History
 ================
+
+3.4.0
+-----
+
+- Added 'Parse' and 'Stringify' both as properties and methods.
+- Added optional 'Parse' argument to 'Validate' method'
+- Added test cases for passing inexistent Field argument to various methods.
+- Added check to make sure the Field argument exists in 'Generate', 'Is' and 'In' methods.
+- Made the default values for various properties more readable in the doc.
 
 3.3.0
 -----
