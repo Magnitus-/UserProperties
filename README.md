@@ -10,9 +10,9 @@ I intend to use it to improve the flexibility, API quality and overall design of
 Requirements
 ============
 
-- A recent version of Node.js (version 0.10.25 is installed on my machine) [1]
+- A recent version of Node.js (version 0.10.25 is installed on my machine) \[1\]
 
-[1] Later versions should also work. If you find it not to be the case, let me know.
+\[1\] Later versions should also work. If you find it not to be the case, let me know.
 
 Installation
 ============
@@ -64,7 +64,7 @@ Properties Defaults
 - Retrievable: true
 - Access: 'User'
 - Description: A function that always returns true
-- Sources: ['User'] (an array containing only the string 'User')
+- Sources: \['User'\] (an array containing only the string 'User')
 - Generator: null
 - Stringify: A function that returns a String argument unchanged and passes other types of argument to JSON.stringify, returning the result
 - Parse: A function that returns its argument unchanged
@@ -164,6 +164,11 @@ Potential new calls/properties as I find use for them
 
 Versions History
 ================
+
+3.4.1
+-----
+
+Fixed markeup error in doc.
 
 3.4.0
 -----
